@@ -1,10 +1,20 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import User, Coords, Level, Pereval, Image
 
-# Кастомизация админки для Pereval
+# Кастомизация встроенной формы для изображений
 class ImageInline(admin.TabularInline):
     model = Image
     extra = 1  # Количество дополнительных полей для загрузки изображений
+    readonly_fields = ('image_preview',)  # Поле для миниатюры
+    fields = ('image_preview', 'data', 'title')  # Поля в форме
+
+    def image_preview(self, obj):
+        if obj.data:  # Проверяем, есть ли изображение
+            return format_html('<img src="{}" style="max-height: 100px;" />', obj.data.url)
+        return "No Image"
+
+    image_preview.short_description = "Preview"
 
 class PerevalAdmin(admin.ModelAdmin):
     list_display = ('title', 'beauty_title', 'user', 'add_time')  # Поля в списке объектов
