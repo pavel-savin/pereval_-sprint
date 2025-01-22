@@ -8,29 +8,36 @@ class ImageInline(admin.TabularInline):
     extra = 1  # Количество дополнительных полей для загрузки изображений
     readonly_fields = ('image_preview',)  # Поле для миниатюры
     fields = ('image_preview', 'data', 'title')  # Поля в форме
-
+    fk_name = 'pereval'  # Явное указание связи
+    
     def image_preview(self, obj):
         if obj.data:  # Проверяем, есть ли изображение
             return format_html('<img src="{}" style="max-height: 100px;" />', obj.data.url)
         return "No Image"
 
     image_preview.short_description = "Preview"
-
+@admin.register(Pereval)
 class PerevalAdmin(admin.ModelAdmin):
-    list_display = ('title', 'beauty_title', 'user', 'add_time')  # Поля в списке объектов
-    list_filter = ('user', 'add_time')  # Фильтры справа
-    search_fields = ('title', 'beauty_title')  # Поиск по полям
-    inlines = [ImageInline]  # Встроенная форма для изображений
+    list_display = ('title', 'beauty_title', 'status', 'add_time')
+    list_filter = ('status', 'add_time')
+    search_fields = ('title', 'beauty_title')
+    inlines = [ImageInline]
 
 # Кастомизация админки для User
+@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'fam', 'name', 'phone')  # Отображаемые поля
-    search_fields = ('email', 'fam')  # Поиск по email и фамилии
+    list_display = ('email', 'fam', 'name', 'phone')
+    search_fields = ('email', 'fam')
 
-# Регистрация всех моделей
-admin.site.register(User, UserAdmin)
-admin.site.register(Coords)
-admin.site.register(Level)
-admin.site.register(Pereval, PerevalAdmin)
-admin.site.register(Image)
+@admin.register(Coords)
+class CoordsAdmin(admin.ModelAdmin):
+    list_display = ('latitude', 'longitude', 'height')
+
+@admin.register(Level)
+class LevelAdmin(admin.ModelAdmin):
+    list_display = ('winter', 'summer', 'autumn', 'spring')
+
+@admin.register(Image)
+class ImageAdmin(admin.ModelAdmin):
+    list_display = ('title', 'pereval')
 # Register your models here.

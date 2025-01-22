@@ -28,6 +28,13 @@ class Level(models.Model):
         return f'Уровень: зима({self.winter}), лето({self.summer})'
 
 class Pereval(models.Model):
+    STATUS_CHOICES = [
+        ('new', 'Новый'),
+        ('pending', 'На модерации'),
+        ('accepted', 'Принято'),
+        ('rejected', 'Отклонено'),
+    ]
+    
     beauty_title = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     other_titles = models.CharField(max_length=255)
@@ -36,12 +43,17 @@ class Pereval(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     coords = models.OneToOneField(Coords, on_delete=models.CASCADE)
     level = models.OneToOneField(Level, on_delete=models.CASCADE)
+    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default='new')
 
     def __str__(self):
         return self.title
 
 class Image(models.Model):
-    pereval = models.ForeignKey(Pereval, on_delete=models.CASCADE, related_name='images')
+    pereval = models.ForeignKey(
+        Pereval, 
+        on_delete=models.CASCADE, 
+        related_name='attached_images'  # Уникальное имя для обратной связи
+    )
     data = models.ImageField(upload_to='images/')
     title = models.CharField(max_length=255)
 

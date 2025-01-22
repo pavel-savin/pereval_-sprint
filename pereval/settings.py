@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 
 from pathlib import Path
+from dotenv import load_dotenv
+
+
+# Загружаем переменные из .env
+load_dotenv()  # Ищет .env в корне проекта
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,9 +83,13 @@ WSGI_APPLICATION = "pereval.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'pereval_db',
+        'USER': os.getenv('FSTR_DB_LOGIN'),      # Логин из переменной окружения
+        'PASSWORD': os.getenv('FSTR_DB_PASS'),   # Пароль из переменной окружения
+        'HOST': os.getenv('FSTR_DB_HOST'),       # Хост из переменной окружения
+        'PORT': os.getenv('FSTR_DB_PORT'),       # Порт из переменной окружения
     }
 }
 
