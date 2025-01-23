@@ -25,7 +25,7 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = ['data', 'title']
 
 class PerevalSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)  # Запрещаем изменение пользователя
+    user = UserSerializer(read_only=False)  
     coords = CoordsSerializer()
     level = LevelSerializer()
     attached_images = ImageSerializer(many=True)
