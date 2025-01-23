@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: pereval_postgres
+    environment:
+      POSTGRES_DB: pereval_db
+      POSTGRES_USER: pereval_user
+      POSTGRES_PASSWORD: pereval_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pereval_network
+
+volumes:
+  postgres_data:
+
+networks:
+  pereval_network:
