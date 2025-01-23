@@ -25,22 +25,27 @@ class PerevalUpdateView(UpdateAPIView):
     queryset = Pereval.objects.all()
     serializer_class = PerevalSerializer
     http_method_names = ['patch']
+    
     def update(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
+            
             if instance.status != 'new':
                 return Response(
                     {"state": 0, "message": "Редактирование запрещено: запись не в статусе 'new'"},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+                
             if 'user' in request.data:
                 return Response(
                     {"state": 0, "message": "Редактирование данных пользователя запрещено"},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+                
             serializer = self.get_serializer(instance, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
+            
             return Response({"state": 1, "message": None}, status=status.HTTP_200_OK)
             
         except Exception as e:
@@ -48,14 +53,19 @@ class PerevalUpdateView(UpdateAPIView):
                 {"state": 0, "message": str(e)}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
+            
     def perform_update(self, serializer):
         serializer.save(status='pending')
+        
 class PerevalListView(ListAPIView):
     serializer_class = PerevalSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['user__email']
     renderer_classes = [JSONRenderer]
 
+    def get_queryset(self):
+        return Pereval.objects.all()
+    
 class SubmitDataView(APIView):
     def post(self, request):
         serializer = PerevalSerializer(data=request.data)

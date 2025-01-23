@@ -33,6 +33,7 @@ class APITests(TestCase):
             data="test.jpg",
             title="Тестовое фото"
         )
+        
     # 1. Успешное создание перевала (все обязательные поля + правильные типы)
     def test_create_pereval_success(self):
         valid_data = {
@@ -74,10 +75,12 @@ class APITests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("id", response.data)
         self.assertIsNone(response.data["message"])
+        
     # 2. Получение перевала по ID (проверка структуры ответа)
     def test_get_pereval_by_id(self):
         response = self.client.get(f"/api/submitData/{self.pereval.id}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
     # 3. Редактирование перевала в статусе 'new' (корректный формат запроса)
     def test_update_new_pereval(self):
         update_data = {"title": "Обновленное название"}
@@ -88,6 +91,7 @@ class APITests(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["state"], 1)
+        
     # 4. Запрет редактирования не в статусе 'new'
     def test_update_non_new_pereval(self):
         self.pereval.status = "accepted"
@@ -100,10 +104,12 @@ class APITests(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["state"], 0)
+        
     # 5. Фильтрация по email (адаптация под текущую структуру ответа)
     def test_filter_by_email(self):
         response = self.client.get("/api/submitData/list/?user__email=test@example.com")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
     # 6. Обработка невалидных данных (проверка основных ошибок)
     def test_invalid_data_creation(self):
         invalid_data = {
